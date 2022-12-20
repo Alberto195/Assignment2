@@ -1,7 +1,6 @@
 package org.example.scraper;
 
-
-import org.assignment1.models.Entry;
+import org.example.models.Entry;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -61,7 +60,7 @@ public class Scraper {
                     }
                 }
 
-                String price = driver.findElement(By.xpath("//*[@id=\"prcIsum\"]")).getText();
+                String price = driver.findElement(By.xpath("//*[@id=\"mainContent\"]/form/div[2]/div/div[1]/div[1]/div/div[2]/div[1]/span[1]/span")).getText();
                 String newPrice = transformPrice(price);
 
                 String descriptionLink = driver.findElement(By.xpath("//*[@id=\"desc_ifr\"]")).getAttribute("src");

@@ -7,6 +7,8 @@ public class Entry {
     String url;
     String imageUrl;
     String priceInCents;
+    String postDate;
+    String id;
 
     public Entry(String type, String heading, String description, String url, String imageUrl, String priceInCents) {
         this.type = type;

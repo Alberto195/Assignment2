@@ -1,10 +1,18 @@
 package org.example.api;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.reflect.TypeToken;
 import okhttp3.*;
-import org.assignment1.models.Entry;
+import org.example.models.Entry;
+import org.example.models.LogEvent;
 import org.json.JSONObject;
+import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.List;
 
 public class HttpClient {
 
@@ -58,19 +66,22 @@ public class HttpClient {
         }
     }
 
-    public boolean purgeAlerts() {
+    public List<LogEvent> eventLog() {
         Request request = new Request.Builder()
                 .url("https://api.marketalertum.com/EventsLog/" + userId)
-                .delete()
+                .get()
                 .build();
 
         try {
-            Response response = client.newCall(request).execute();
-
-            return response.code() == 200;
+            ResponseBody responseBody = client.newCall(request).execute().body();
+            assert responseBody != null;
+            String json = responseBody.string();
+            Gson gson = new Gson();
+            Type listType = new TypeToken<List<LogEvent>>(){}.getType();
+            return gson.fromJson(json, listType);
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
+            return null;
         }
     }
 
