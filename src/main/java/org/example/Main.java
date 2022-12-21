@@ -11,7 +11,7 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        System.setProperty("webdriver.chrome.driver", "/home/albert/Downloads/chromedriver_linux64/chromedriver");
+        java.lang.System.setProperty("webdriver.chrome.driver", "/home/albert/Downloads/chromedriver_linux64/chromedriver");
         WebDriver driver = new ChromeDriver();
         Entry alert = new Entry(
                 "6",
@@ -22,7 +22,7 @@ public class Main {
                 "200000"
         );
         HttpClient client = new HttpClient(new OkHttpClient());
-        Logger logger = new Logger(driver);
+        System logger = new System(driver);
         List<LogEvent> events = client.eventLog();
         client.purgeAlerts();
         events.isEmpty();

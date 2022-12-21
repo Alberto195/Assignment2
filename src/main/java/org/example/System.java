@@ -1,25 +1,30 @@
 package org.example;
 
 import okhttp3.OkHttpClient;
+import org.apache.commons.collections15.functors.FalsePredicate;
 import org.example.api.HttpClient;
 import org.example.models.Entry;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
 
-public class Logger {
+public class System {
 
     WebDriver driver;
     AlertPage alertPage;
     HttpClient client;
+
+    private int alerts = 0;
+
+    private boolean logged = false;
+
     private final By loginButton = By.xpath("/html/body/header/nav/div/div/ul/li[3]/a");
     private final By logoutButton = By.xpath("/html/body/header/nav/div/div/ul/li[3]/a");
     private final By loginTextField = By.xpath("//*[@id=\"UserId\"]");
     private final By submitButton = By.xpath("/html/body/div/main/form/input[2]");
 
-    public Logger(WebDriver driver) {
+    public System(WebDriver driver) {
         this.client = new HttpClient(new OkHttpClient());
         driver.get("https://www.marketalertum.com");
         this.driver = driver;
@@ -35,14 +40,7 @@ public class Logger {
                 "image url",
                 "200000"
         ));
-    }
-
-    public void closeDriver() {
-        this.driver.quit();
-    }
-
-    public WebDriver getDriver() {
-        return this.driver;
+        alerts += 1;
     }
 
     public void getAlerts() {
@@ -50,6 +48,7 @@ public class Logger {
 
     public void purgeAlerts() {
         client.purgeAlerts();
+        alerts = 0;
     }
 
     public void validLogIn() throws InterruptedException {
@@ -59,6 +58,7 @@ public class Logger {
         String userId = "a338083d-1742-421a-be40-5978848942df";
         field.sendKeys(userId);
         driver.findElement(submitButton).submit();
+        logged = true;
     }
 
     public void invalidLogIn() throws InterruptedException {
@@ -67,6 +67,7 @@ public class Logger {
         WebElement field = driver.findElement(loginTextField);
         field.sendKeys("invalidLogIn");
         driver.findElement(submitButton).submit();
+        logged = false;
     }
 
     public void logOut() {
@@ -76,6 +77,7 @@ public class Logger {
         driver.get("https://www.marketalertum.com");
         this.driver = driver;
         this.alertPage = new AlertPage(this.driver);
+        logged = false;
     }
 
     public void reset() {
@@ -84,17 +86,18 @@ public class Logger {
         driver.get("https://www.marketalertum.com");
         this.driver = driver;
         this.alertPage = new AlertPage(this.driver);
+        logged = false;
     }
 
     public void properLogOut() {
         driver.findElement(logoutButton).click();
     }
 
-    public void navigateToAlerts() {
-        driver.get("https://www.marketalertum.com/Alerts/List");
+    public boolean isLogged() {
+        return logged;
     }
 
-    public void navigateToLogin() {
-        driver.get("https://www.marketalertum.com/Alerts/Login");
+    public int getAlertsAmount() {
+        return alerts;
     }
 }

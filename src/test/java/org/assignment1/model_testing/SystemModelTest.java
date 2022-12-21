@@ -1,15 +1,14 @@
 package org.assignment1.model_testing;
 
-import nz.ac.waikato.modeljunit.*;
+import nz.ac.waikato.modeljunit.Action;
+import nz.ac.waikato.modeljunit.FsmModel;
+import nz.ac.waikato.modeljunit.GreedyTester;
+import nz.ac.waikato.modeljunit.StopOnFailureListener;
 import nz.ac.waikato.modeljunit.coverage.ActionCoverage;
 import nz.ac.waikato.modeljunit.coverage.StateCoverage;
 import nz.ac.waikato.modeljunit.coverage.TransitionPairCoverage;
-import okhttp3.OkHttpClient;
 import org.assignment1.model_testing.enums.SystemStates;
-import org.example.AlertPage;
-import org.example.Logger;
-import org.example.api.HttpClient;
-import org.junit.After;
+import org.example.System;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -17,9 +16,11 @@ import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.util.Random;
 
+import static org.junit.Assert.assertEquals;
+
 public class SystemModelTest implements FsmModel {
 
-    private final Logger systemUnderTest;
+    private final System systemUnderTest;
 
     private SystemStates systemState = SystemStates.LOG_OUT_PURGED;
 
@@ -27,16 +28,16 @@ public class SystemModelTest implements FsmModel {
     private int alerts = 0;
 
     public SystemModelTest() {
-        System.setProperty("webdriver.chrome.driver", "/home/albert/Downloads/chromedriver_linux64/chromedriver");
+        java.lang.System.setProperty("webdriver.chrome.driver", "/home/albert/Downloads/chromedriver_linux64/chromedriver");
         ChromeOptions chromeOptions = new ChromeOptions();
         chromeOptions.addArguments("--log-level=3");
         chromeOptions.addArguments("--silent");
         WebDriver driver = new ChromeDriver(chromeOptions);
-        this.systemUnderTest = new Logger(driver);
+        this.systemUnderTest = new System(driver);
     }
 
     @Override
-    public Object getState() {
+    public SystemStates getState() {
         return systemState;
     }
 
@@ -50,9 +51,6 @@ public class SystemModelTest implements FsmModel {
         alerts = 0;
     }
 
-    public boolean addAlertGuard() {
-        return logged;
-    }
     public @Action void addAlert() {
         systemUnderTest.addAlert();
         alerts += 1;
@@ -61,11 +59,9 @@ public class SystemModelTest implements FsmModel {
         } else  {
             systemState = SystemStates.LOG_IN_ADDED;
         }
+        assertEquals("The SUT's alert amount does not match the model's alert amount after new alert", alerts, systemUnderTest.getAlertsAmount());
     }
 
-    public boolean purgeAlertsGuard() {
-        return logged;
-    }
     public @Action void purgeAlerts() {
         systemUnderTest.purgeAlerts();
         alerts = 0;
@@ -74,6 +70,7 @@ public class SystemModelTest implements FsmModel {
         } else {
             systemState = SystemStates.LOG_IN_PURGED;
         }
+        assertEquals("The SUT's alert amount does not match the model's alert amount after alert purge", alerts, systemUnderTest.getAlertsAmount());
     }
 
     public boolean validLogInGuard() {
@@ -87,6 +84,7 @@ public class SystemModelTest implements FsmModel {
         } else if (getState().equals(SystemStates.LOG_OUT_ADDED)) {
             systemState = SystemStates.LOG_IN_ADDED;
         }
+        assertEquals("The SUT's logged in state does not match the model's logged in state after log in", logged, systemUnderTest.isLogged());
     }
 
     public boolean validLogOutGuard() {
@@ -101,6 +99,7 @@ public class SystemModelTest implements FsmModel {
         } else if (getState().equals(SystemStates.LOG_IN_ADDED) || getState().equals(SystemStates.SEE_LAST_5_ALERTS)) {
             systemState = SystemStates.LOG_OUT_ADDED;
         }
+        assertEquals("The SUT's logged in state does not match the model's logged in state after log out", logged, systemUnderTest.isLogged());
     }
 
     public boolean invalidLogInGuard() {
@@ -108,6 +107,7 @@ public class SystemModelTest implements FsmModel {
     }
     public @Action void invalidLogIn() throws InterruptedException {
         systemUnderTest.invalidLogIn();
+        assertEquals("The SUT's logged in state does not match the model's logged in state after false log in", logged, systemUnderTest.isLogged());
     }
 
     public boolean seeLastAlertsGuard() {
@@ -133,7 +133,7 @@ public class SystemModelTest implements FsmModel {
         tester.addCoverageMetric(new TransitionPairCoverage()); //Records the transition pair coverage i.e. the number of paired transitions traversed during the execution of the test.
         tester.addCoverageMetric(new StateCoverage()); //Records the state coverage i.e. the number of states which have been visited during the execution of the test.
         tester.addCoverageMetric(new ActionCoverage()); //Records the number of @Action methods which have been executed during the execution of the test.
-        tester.generate(100); //Generates 500 transitions
+        tester.generate(100); //Generates 100 transitions
         tester.printCoverage(); //Prints the coverage metrics specified above.
     }
 }
