@@ -1,6 +1,6 @@
 package org.assignment1.unit.model;
 
-import org.assignment1.models.Entry;
+import org.example.models.Entry;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

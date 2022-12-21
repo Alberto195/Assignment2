@@ -13,7 +13,6 @@ public class Main {
     public static void main(String[] args) {
         System.setProperty("webdriver.chrome.driver", "/home/albert/Downloads/chromedriver_linux64/chromedriver");
         WebDriver driver = new ChromeDriver();
-        driver.get("https://www.marketalertum.com");
         Entry alert = new Entry(
                 "6",
                 "ps5",
@@ -23,7 +22,7 @@ public class Main {
                 "200000"
         );
         HttpClient client = new HttpClient(new OkHttpClient());
-        Logger test = new Logger(driver);
+        Logger logger = new Logger(driver);
         List<LogEvent> events = client.eventLog();
         client.purgeAlerts();
         events.isEmpty();

@@ -1,7 +1,7 @@
 package org.assignment1.unit.scraper;
 
-import org.assignment1.models.Entry;
-import org.assignment1.scraper.Scraper;
+import org.example.models.Entry;
+import org.example.scraper.Scraper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
